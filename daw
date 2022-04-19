@@ -1,0 +1,39 @@
+pip install dwave-ocean-sdk
+import numpy as np
+N = 10
+QUBO =np.random.randn(N**2).reshape(N,N)
+token='DEV-aa0c1a4b8a1e5b8dbd5f9a0139833b7ab7b6fb3d'
+endpoint = 'https://cloud.dwavesys.com/sapi/'
+from dwave.system import DWaveSampler, EmbeddingComposite
+dw_sampler = DWaveSampler(solver='Advantage_system4.1',token=token,endpoint=endpoint)
+sampler = EmbeddingComposite(dw_sampler)
+sampleset = sampler.sample_qubo(QUBO, num_reads=10)
+sampleset = sampler.sample_qubo(QUBO, num_reads=10)
+print(sampleset.record)
+sampleset.record[0][0]
+array([1, 0, 1, 1, 0, 1, 0, 1, 0, 0], dtype=int8)
+N = 10
+w = np.random.rand(N)
+W = np.sum(w)
+Q = np.zeros(N**2).reshape(N,N)
+for i in range(N):
+  for j in range(N):
+    Q[i][j] = 4*w[i]*w[j]
+    for i in range(N):
+  Q[i][i] = Q[i][i] - 4*W*w[i]
+  sampleset = sampler.sample_qubo(Q, num_reads=10)
+  print(sampleset.record)
+  x = sampleset.record[0][0]
+  print(np.dot(w,x))
+  print(W-np.dot(w,x))
+  from dwave.system import LeapHybridSampler
+sampler = LeapHybridSampler(solver='hybrid_binary_quadratic_model_version2', token=token, endpoint=endpoint)
+sampleset = sampler.sample_qubo(Q)
+print(sampleset.record)
+Qdict = {}
+for i in range(N):
+  for j in range(N):
+    if Q[i][j] != 0.0:
+      Qdict[(i,j)] = Q[i][j]
+ print(Qdict)
+      
